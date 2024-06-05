@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CandidateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('lead')->group(function () {
+    Route::get('',          [CandidateController::class, 'index']);
+    Route::get('/{id]',     [CandidateController::class, 'show']);
+    Route::post('/',        [CandidateController::class, 'store']);
+    Route::put('/',         [CandidateController::class, 'update']);
+    Route::delete('/{id}',  [CandidateController::class, 'destroy']);
 });
