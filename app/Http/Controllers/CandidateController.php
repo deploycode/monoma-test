@@ -7,6 +7,9 @@ use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
 use App\Repositories\CandidateRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 
 class CandidateController extends Controller
@@ -21,9 +24,10 @@ class CandidateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): CandidateCollection
+    public function index(): JsonResponse
     {
-        return new CandidateCollection($this->candidateRepository->index());
+        $candidateCollection = new CandidateCollection($this->candidateRepository->index());
+        return new JsonResponse($candidateCollection, 200);
     }
 
     /**
@@ -37,10 +41,10 @@ class CandidateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCandidateRequest $request): CandidateResource
+    public function store(StoreCandidateRequest $request): JsonResponse
     {
-        return new CandidateResource($this->candidateRepository->store($request->all()));
-        // return new JsonResponse($this->candidateRepository->store($request->all()), ResponseAlias::HTTP_CREATED);
+        $candidateResource = new CandidateResource($this->candidateRepository->store($request->validated()));
+        return new jsonResponse($candidateResource, ResponseAlias::HTTP_CREATED);
     }
 
     /**
