@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('lead')->group(function () {
     Route::get('',          [CandidateController::class, 'index']);
     Route::get('/{id]',     [CandidateController::class, 'show']);
-    Route::post('/',        [CandidateController::class, 'store']);
-    Route::put('/',         [CandidateController::class, 'update']);
+    Route::post('',        [CandidateController::class, 'store']);
+    Route::put('',         [CandidateController::class, 'update']);
     Route::delete('/{id}',  [CandidateController::class, 'destroy']);
 });

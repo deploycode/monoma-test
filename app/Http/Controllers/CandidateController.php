@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCandidateRequest;
+use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
-use App\Models\Candidate;
-use Illuminate\Http\JsonResponse;
+use App\Repositories\CandidateRepository;
 use Illuminate\Http\Request;
+
 
 class CandidateController extends Controller
 {
+    protected CandidateRepository $candidateRepository;
+
+    public function __construct(CandidateRepository $candidateRepository)
+    {
+        $this->candidateRepository = $candidateRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): CandidateCollection
     {
-        return new CandidateCollection(Candidate::all());
+        return new CandidateCollection($this->candidateRepository->index());
     }
 
     /**
@@ -28,9 +37,10 @@ class CandidateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCandidateRequest $request): CandidateResource
     {
-        //
+        return new CandidateResource($this->candidateRepository->store($request->all()));
+        // return new JsonResponse($this->candidateRepository->store($request->all()), ResponseAlias::HTTP_CREATED);
     }
 
     /**
