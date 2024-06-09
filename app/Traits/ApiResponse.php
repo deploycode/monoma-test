@@ -16,8 +16,9 @@ trait ApiResponse
         return response()->json([
             'meta' => [
                 'success' => true,
-                'data' => $data,
-            ]
+                'errors' => [],
+            ],
+            'data' => $data,
         ], $code);
     }
 
@@ -34,7 +35,8 @@ trait ApiResponse
             'meta' => [
                 'success' => false,
                 'errors' => $errors,
-            ]
+            ],
+            'data' => [],
         ], $code);
     }
 }

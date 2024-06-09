@@ -36,6 +36,7 @@ class CandidateControllerTest extends TestCase
             'Authorization' => 'Bearer '.$token,
         ])->json('GET', '/api/lead');
 
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+        ->assertJsonCount(3, 'data');
     }
 }
