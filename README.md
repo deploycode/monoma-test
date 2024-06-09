@@ -1,4 +1,21 @@
 # MONOMA-TEST
+
+- git clone git@github.com:deploycode/monoma-test.git nomona-challenge
+- cd nomona-test/
+- cp .env.example .env
+
+- docker compose up -d
+- docker exec -it nomona-challenge-laravel.test-1 bash
+- composer install
+- php artisan key:generate
+- php artisan jwt:secret
+- php artisan migrate
+- php artisan db:seed
+
+
+- sudo systemctl stop apache2
+- docker rm -f $(docker ps -aq)
+####
 - Laravel 10
 - Laravel sail
 - ./vendor/bin/sail up
