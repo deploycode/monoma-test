@@ -41,6 +41,24 @@ class CandidateControllerTest extends TestCase
     }
 
     /** @test */
+    public function it_returns_a_list_of_candidates_for_agent()
+    {
+
+        $user = User::factory()->create(['role' => 'agent']);
+        $token = JWTAuth::fromUser($user);
+
+        Sanctum::actingAs($user, ['*']);
+        Candidate::factory()->count(3)->create();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->json('GET', '/api/lead');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    }
+
+    /** @test */
     public function it_returns_an_empty_list_of_candidates_for_manager()
     {
 
@@ -78,9 +96,50 @@ class CandidateControllerTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_candidate_details_for_agent_or_manager()
+    public function it_creates_a_new_failde_candidate_for_manager()
+    {
+        $user = User::factory()->create(['role' => 'manager']);
+        $token = JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->json('POST', '/api/lead', [
+            'name' => 123,
+            'source' => 'papaya',
+            'owner' => 1,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'meta' => [
+                    'success' => false,
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_candidate_details_for_agent()
     {
         $user = User::factory()->create(['role' => 'agent']);
+        $candidate = Candidate::factory(['owner'=> $user->id])->create();
+        $token = JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token,
+        ])->json('GET', '/api/lead/'.$candidate->id);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $candidate->id,
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_candidate_details_for_manager()
+    {
+        $user = User::factory()->create(['role' => 'manager']);
         $candidate = Candidate::factory(['owner'=> $user->id])->create();
         $token = JWTAuth::fromUser($user);
 

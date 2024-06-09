@@ -47,12 +47,4 @@ class CandidateRepository
         $candidate['created_by'] = auth()->id();
         return $this->model->create($candidate);
     }
-
-    public function update(array $candidate, $id){
-        return $this->model->findOrFail($id)->update($candidate);
-    }
-
-    public function destroy($id){
-        return $this->model->destroy($id);
-    }
 }

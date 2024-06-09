@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -18,7 +23,7 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 400);
+            return $this->errorResponse($validator->errors()->toArray(), ResponseAlias::HTTP_BAD_REQUEST);
         }
 
         $user = User::create([
@@ -30,10 +35,7 @@ class AuthController extends Controller
 
         $token = Auth::login($user);
 
-        return response()->json([
-            'message' => 'User successfully registered',
-            'token' => $token
-        ], 201);
+        return $this->successResponse(['token' => $token], 201);
     }
 
     public function login(Request $request)
