@@ -15,7 +15,7 @@ class CandidateCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
 
-        $data =  $this->collection->map(function ($candidate) {
+        return  $this->collection->map(function ($candidate) {
             return  [
                 "id" => $candidate->id,
                 "name" => $candidate->name,
@@ -25,13 +25,5 @@ class CandidateCollection extends ResourceCollection
                 "created_by" => $candidate->created_by,
             ];
         })->toArray();
-
-        return [
-            'data' => $data,
-            'meta' => [
-                'success' => true,
-                'errors' => [],
-            ],
-        ];
     }
 }

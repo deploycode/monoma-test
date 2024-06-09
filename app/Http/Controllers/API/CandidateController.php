@@ -7,12 +7,13 @@ use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
 use App\Repositories\CandidateRepository;
-use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class CandidateController extends Controller
 {
+    use ApiResponse;
     protected CandidateRepository $candidateRepository;
 
     public function __construct(CandidateRepository $candidateRepository)
@@ -26,7 +27,11 @@ class CandidateController extends Controller
     public function index()
     {
         $candidateCollection = new CandidateCollection($this->candidateRepository->index());
-        return new \Symfony\Component\HttpFoundation\JsonResponse($candidateCollection, 200);
+        if(count($candidateCollection) > 0) {
+            return $this->successResponse($candidateCollection);
+        } else {
+            return $this->errorResponse(['Not found'], ResponseAlias::HTTP_NOT_FOUND);
+        }
     }
 
     /**
@@ -35,7 +40,7 @@ class CandidateController extends Controller
     public function store(StoreCandidateRequest $request)
     {
         $candidateResource = new CandidateResource($this->candidateRepository->store($request->validated()));
-        return new \Symfony\Component\HttpFoundation\JsonResponse($candidateResource, ResponseAlias::HTTP_CREATED);
+        return $this->successResponse($candidateResource, ResponseAlias::HTTP_CREATED);
     }
 
     /**
@@ -44,7 +49,7 @@ class CandidateController extends Controller
     public function show(string $id)
     {
         $candidateResource = $this->candidateRepository->show($id);
-        return new JsonResponse($candidateResource, ResponseAlias::HTTP_OK);
+        return $this->successResponse($candidateResource, ResponseAlias::HTTP_OK);
     }
 
     /**

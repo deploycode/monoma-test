@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Candidate;
+use Illuminate\Support\Facades\Auth;
 
 class CandidateRepository
 {
@@ -15,12 +16,26 @@ class CandidateRepository
 
     public function index()
     {
-        return $this->model->all();
+        $user = Auth::user();
+        if($user->role === 'agent') {
+            return Candidate::query()->where('owner', $user->id)->get();
+        }else {
+            return $this->model->all();
+        }
+
     }
 
     public function show($id)
     {
-        return $this->model->findOrFail($id);
+        $user = Auth::user();
+        if($user->role === 'agent') {
+            return Candidate::query()
+                ->where('owner', $user->id)
+                ->where('id', $id)->get();
+        }else {
+            return $this->model->findOrFail($id);
+        }
+
     }
 
     public function store(array $candidate)

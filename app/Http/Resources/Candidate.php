@@ -15,18 +15,12 @@ class Candidate extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'data' => [
-                "id" => $this->id,
-                "name" => $this->name,
-                "source" => $this->source,
-                "owner" => $this->owner,
-                "created_at" => $this->created_at,
-                "created_by" => $this->created_by,
-            ],
-            'meta' => [
-                'success' => true,
-                'errors' => [],
-            ],
+            "id" => $this->id,
+            "name" => $this->name,
+            "source" => $this->source,
+            "owner" => $this->owner,
+            "created_at" => $this->created_at,
+            "created_by" => $this->created_by,
         ];
     }
 }

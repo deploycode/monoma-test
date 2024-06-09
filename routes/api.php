@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Api\CandidateController;
+use App\Http\Controllers\API\CandidateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->group(function () {
+
+Route::middleware(['auth:api', 'role:manager'])->group(function () {
     Route::apiResource('lead', CandidateController::class);
+});
+
+Route::middleware(['auth:api', 'role:agent,manager'])->group(function () {
+    Route::apiResource('lead', CandidateController::class)->except(['store']);
 });
 
 Route::group([
