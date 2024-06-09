@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\CandidateController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\CandidateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('lead', CandidateController::class);
 });
 
-Route::prefix('lead')->group(function () {
-    Route::apiResource('candidate', \App\Http\Controllers\API\CandidateController::class);
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('auth', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('me', [AuthController::class, 'me']);
 });
