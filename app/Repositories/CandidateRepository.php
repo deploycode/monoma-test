@@ -18,6 +18,11 @@ class CandidateRepository
         return $this->model->all();
     }
 
+    public function show($id)
+    {
+        return $this->model->findOrFail($id);
+    }
+
     public function store(array $candidate)
     {
         $candidate['created_by'] = 1; // auth()->id()
@@ -25,7 +30,7 @@ class CandidateRepository
     }
 
     public function update(array $candidate, $id){
-        return $this->model->finOrFail($id)->update($candidate);
+        return $this->model->findOrFail($id)->update($candidate);
     }
 
     public function destroy($id){

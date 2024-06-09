@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
 use App\Repositories\CandidateRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-
 
 class CandidateController extends Controller
 {
@@ -24,49 +23,34 @@ class CandidateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index()
     {
         $candidateCollection = new CandidateCollection($this->candidateRepository->index());
-        return new JsonResponse($candidateCollection, 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return new \Symfony\Component\HttpFoundation\JsonResponse($candidateCollection, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCandidateRequest $request): JsonResponse
+    public function store(StoreCandidateRequest $request)
     {
         $candidateResource = new CandidateResource($this->candidateRepository->store($request->validated()));
-        return new jsonResponse($candidateResource, ResponseAlias::HTTP_CREATED);
+        return new \Symfony\Component\HttpFoundation\JsonResponse($candidateResource, ResponseAlias::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Candidate $lead)
+    public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Candidate $lead)
-    {
-        //
+        $candidateResource = $this->candidateRepository->show($id);
+        return new JsonResponse($candidateResource, ResponseAlias::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Candidate $lead)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -74,7 +58,7 @@ class CandidateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Candidate $lead)
+    public function destroy(string $id)
     {
         //
     }
