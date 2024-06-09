@@ -29,18 +29,22 @@ class CandidateRepository
     {
         $user = Auth::user();
         if($user->role === 'agent') {
-            return Candidate::query()
+            $candidate = Candidate::query()
                 ->where('owner', $user->id)
-                ->where('id', $id)->get();
+                ->where('id', $id)->first();
+            if ($candidate) {
+                return $candidate;
+            }
+            return null;
         }else {
-            return $this->model->findOrFail($id);
+            return $this->model->find($id) ?? null;
         }
 
     }
 
     public function store(array $candidate)
     {
-        $candidate['created_by'] = 1; // auth()->id()
+        $candidate['created_by'] = auth()->id();
         return $this->model->create($candidate);
     }
 

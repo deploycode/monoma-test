@@ -8,7 +8,6 @@ use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
 use App\Repositories\CandidateRepository;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class CandidateController extends Controller
@@ -48,23 +47,12 @@ class CandidateController extends Controller
      */
     public function show(string $id)
     {
-        $candidateResource = $this->candidateRepository->show($id);
-        return $this->successResponse($candidateResource, ResponseAlias::HTTP_OK);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $candidate = $this->candidateRepository->show($id);
+        if ($candidate) {
+            return $this->successResponse(new CandidateResource($candidate));
+        }
+        else {
+            return $this->errorResponse(['Not found'], ResponseAlias::HTTP_NOT_FOUND);
+        }
     }
 }
