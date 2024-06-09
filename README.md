@@ -86,7 +86,7 @@ docker exec -it monoma-test-laravel.test-1 bash
 ```text
 php artisan test --coverage
 ```
-### Generar informe completo en HTML en directorio reports
+### Generar informe completo en HTML en reports/index.html
 ```text
 vendor/bin/phpunit --coverage-html reports/
 ```
