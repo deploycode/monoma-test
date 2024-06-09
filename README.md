@@ -90,3 +90,10 @@ php artisan test --coverage
 ```text
 vendor/bin/phpunit --coverage-html reports/
 ```
+## USUARIOS
+```text
+manager => PASSWORD
+agent1  => PASSWORD
+agent2  => PASSWORD
+agent3  => PASSWORD
+```
