@@ -1,178 +1,92 @@
-# MONOMA-TEST
+## Instalación vía Laravel Sail (Requiere docker)
 
-- git clone git@github.com:deploycode/monoma-test.git nomona-challenge
-- cd nomona-test/
-- cp .env.example .env
+```text
+git clone git@github.com:deploycode/monoma-test.git
+```
+```text
+cd monoma-test/
+```
+```text
+cp .env.example .env
+```
+```text
+docker compose up -d
+```
+```text
+docker exec -it monoma-test-laravel.test-1 bash
+```
+```text
+composer install
+```
+```text
+php artisan key:generate
+```
+```text
+php artisan jwt:secret
+```
+```text
+php artisan migrate
+```
+```text
+php artisan db:seed
+```
 
-- docker compose up -d
-- docker exec -it nomona-challenge-laravel.test-1 bash
-- composer install
-- php artisan key:generate
-- php artisan jwt:secret
-- php artisan migrate
-- php artisan db:seed
-
-
-- sudo systemctl stop apache2
-- docker rm -f $(docker ps -aq)
-####
-- Laravel 10
-- Laravel sail
-- ./vendor/bin/sail up
-- Redis
-
-## Instalación
-La prueba consiste en desarrollar una API Rest con 4 endpoints utilizando Laravel 9 o 10, MySQL para la base de datos y Redis para caché. JWT será usado para la autenticación.
-
-## Configuración
-La prueba consiste en desarrollar una API Rest con 4 endpoints utilizando Laravel 9 o 10, MySQL para la base de datos y Redis para caché. JWT será usado para la autenticación.
+## Instalación vía composer
+#### Requiere php >= 8.1, composer, mysql y redis
 
 ***
 ## Documentación APIS
+### A partir de la API #2 Requiere remplazar el Bearer XXXXX
 
-### 1. /auth (Generar token)
+### 1. GENERAR TOKEN 
+```text
+curl --location --request POST 'http://0.0.0.0/api/auth' \
+--form 'username="manager"' \
+--form 'password="PASSWORD"'
+```
 
-**Body:**
-```json
-{
-  "username": "tester",
-  "password": "PASSWORD"
-}
+```text
+curl --location --request POST 'http://0.0.0.0/api/auth' \
+--form 'username="agent1"' \
+--form 'password="PASSWORD"'
 ```
-**200:**
-```json
-{
-    "meta": { "success":
-        true,"errors": []
-    },
-    "data": {
-        "token": "TOOOOOKEN",
-        "minutes_to_expire": 1440
-    }
-}
+
+***
+### 2. CREAR CANDIDATO
+
+```text
+curl --location --request POST 'http://0.0.0.0/api/lead' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer XXXXX' \
+--data '{
+    "name": "Mr Robot",
+    "source": "US",
+    "owner": 1
+}'
 ```
-**401:**
-```json
-{
-    "meta": { "success":
-      false,"errors": [
-        "Password incorrect for: tester"
-      ]
-    }
-}
+
+***
+### 3. DETALLE CANDIDATO
+```text
+curl --location --request GET 'http://0.0.0.0/api/lead/1' \
+--header 'Authorization: Bearer XXXXXX'
 ```
 ***
-### 2. /lead (Crear candidato)
-**Body:**
-```json
-{
-    "name": "Mi candidato",
-    "source": "Fotocasa",
-    "owner": 2
-}
-```
-**200:**
-```json
-{
-    "meta": { "success": true, "errors": [] },
-    "data": {
-        "id": "1",
-        "name": "Mi candidato",
-        "source": "Fotocasa",
-        "owner": 2,
-        "created_at": "2020-09-01 16:16:16",
-        "created_by": 1
-    }
-}
-```
-**401:**
-```json
-{
-    "meta": { "success": false, "errors": ["Token expired"] }
-}
-```
-***
-### 3. /lead/{id} (Detalle candidato)
-**200:**
-```json
-{
-    "meta": { "success": true, "errors": [] },
-    "data": {
-        "id": "1",
-        "name": "Mi candidato",
-        "source": "Fotocasa",
-        "owner": 2,
-        "created_at": "2020-09-01 16:16:16",
-        "created_by": 1
-    }
-}
-```
-**401:**
-```json
-{
-    "meta": { "success": false, "errors": ["Token expired"] }
-}
-```
-**404:**
-```json
-{
-    "meta": { "success": false, "errors": ["No lead found"] }
-}
-```
-***
-### 4. /leads (Listar candidatos)
-**200:**
-```json
-{
-    "meta": { "success": true, "errors": [] },
-    "data": [
-        {
-            "id": "1",
-            "name": "Mi candidato",
-            "source": "Fotocasa",
-            "owner": 2,
-            "created_at": "2020-09-01 16:16:16",
-            "created_by": 1
-        },
-        {
-            "id": "2",
-            "name": "Mi candidato 2",
-            "source": "Habitaclia",
-            "owner": 2,
-            "created_at": "2020-09-01 16:16:16",
-            "created_by": 1
-        }
-    ]
-}
+### 4. LISTAR CANDIDATOS
 
+```text
+curl --location --request GET 'http://0.0.0.0/api/lead' \
+--header 'Authorization: Bearer XXXXX'
 ```
-**401:**
-```json
-{
-    "meta": { "success": false, "errors": ["Token expired"] }
-}
+## TEST
+Ingresar al contenedor laravel
+```text
+docker exec -it monoma-test-laravel.test-1 bash
 ```
-
-### Modelo de datos:
-**Usuario:**
-```json
-{
-    "id": "1",
-    "username": "tester",
-    "password": "PASSWORD",
-    "last_login": "2020-09-01 16:16:16",
-    "is_active": true,
-    "role": "manager" //manager o agent
-}
+```text
+php artisan test --coverage
 ```
-**Candidato:**
-```json
-{
-"id": "1",
-"name": "Mi candidato",
-"source": "Fotocasa",
-"owner": 2, //Id usuario responsable
-"created_at": "2020-09-01 16:16:16",
-"created_by": 1 //Id usuario que ha creado el candidato
-}
+### Generar informe completo en HTML en directorio reports
+```text
+vendor/bin/phpunit --coverage-html reports/
 ```
